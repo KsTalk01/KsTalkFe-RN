@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, Button, FlatList } from 'react-native';
-import { openDatabase, addTask, getAllTasks, updateTask, deleteTask } from '../services/DatabaseService';
+import { openDatabase, addTask, getAllTasks, updateTask, deleteTask } from '../backend/services/DatabaseService';
 
 const TaskScreen = () => {
   const [tasks, setTasks] = useState<{ id: number, title: string, completed: boolean }[]>([]);
