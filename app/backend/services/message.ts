@@ -1,6 +1,8 @@
-import { db, runQuery, getQuery, getCurrentUserId } from '../utils/dbUtils';
+import { db, insertWithUserId, getQuery, getCurrentUserId } from '../utils/dbUtils';
 
 export const createMessagesTable = async (): Promise<void> => {
+  try{
+  console.log("开始创建message表");
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -8,15 +10,19 @@ export const createMessagesTable = async (): Promise<void> => {
       conversation_id INTEGER NOT NULL,
       sender_id INTEGER NOT NULL,
       message_text TEXT NOT NULL,
-      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '消息发送时间',
-      FOREIGN KEY (conversation_id) REFERENCES conversation(id)
+      timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP --消息发送时间,
     );
   `);
+  console.log("message表创建成功");
+} catch (error) {
+  console.error("创建message表时出错:", error.message);
+  throw error; // 可选，重新抛出错误以便调用者处理
+}
 };
 
 export const addMessage = async (conversationId: number, senderId: number, messageText: string): Promise<number> => {
   const query = `INSERT INTO messages (user_id, conversation_id, sender_id, message_text) VALUES (${getCurrentUserId()}, ?, ?, ?);`;
-  const result = await runQuery(query, conversationId, senderId, messageText);
+  const result = await getQuery(query, conversationId, senderId, messageText);
   return result.lastInsertRowId;
 };
 
